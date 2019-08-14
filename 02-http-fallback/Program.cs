@@ -14,11 +14,11 @@ namespace _02_http_fallback
         {
             using (var httpClient = new HttpClient())
             {
-                var policyResult = Policy
+                var policy = Policy
                     .HandleResult<HttpResponseMessage>(r => (int)r.StatusCode > 499)
-                    .FallbackAsync((cancelToken) => httpClient.GetAsync(FallbackUrl, cancelToken))
-                    .ExecuteAndCaptureAsync(() => httpClient.GetAsync(OlReliableUrl));
-
+                    .FallbackAsync((cancelToken) => httpClient.GetAsync(FallbackUrl, cancelToken));
+                
+                var policyResult = policy.ExecuteAndCaptureAsync(() => httpClient.GetAsync(OlReliableUrl));
                 // execute async code as sync
                 var result = policyResult.GetAwaiter().GetResult();
                 Console.WriteLine($"Outcome: {result.Outcome}");

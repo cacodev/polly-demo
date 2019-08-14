@@ -12,7 +12,7 @@ namespace _01_http_res
         {
             using(var httpClient = new HttpClient())
             {
-                var policyResult = Policy
+                var policy = Policy
                     .HandleResult<HttpResponseMessage>(r => (int)r.StatusCode > 499)
                     .WaitAndRetryAsync(3,
                     retryAttempt =>
@@ -23,9 +23,9 @@ namespace _01_http_res
                     onRetry: (response, time, attempt, context) =>
                     {
                         Console.WriteLine($"Attempt: {attempt} | Exception: {response}");
-                    })
-                    .ExecuteAndCaptureAsync(() => httpClient.GetAsync(OlReliableUrl));
-                
+                    });
+                    
+                var policyResult = policy.ExecuteAndCaptureAsync(() => httpClient.GetAsync(OlReliableUrl));
                 // execute async code as sync
                 var result = policyResult.GetAwaiter().GetResult();
                 Console.WriteLine($"Outcome: {result.Outcome}");
