@@ -1,0 +1,7 @@
+Show:
+- Fail with Retry (and backoff times)
+- Circuit breaker (advanced circuit breaker)
+- Timeout
+- Cache
+- Fall back
+
